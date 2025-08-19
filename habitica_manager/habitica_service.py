@@ -26,9 +26,9 @@ class HabiticaService:
     
     def _validate_credentials(self):
         """Validate that API credentials are properly configured"""
-        print(f"\n🔍 Validating Habitica API Credentials:")
-        print(f"   User ID: {'✅ Set' if self.user_id else '❌ Missing'}")
-        print(f"   API Token: {'✅ Set' if self.api_token else '❌ Missing'}")
+        logger.info("Validating Habitica API Credentials")
+        logger.debug(f"User ID: {'Set' if self.user_id else 'Missing'}")
+        logger.debug(f"API Token: {'Set' if self.api_token else 'Missing'}")
         
         if not self.user_id or self.user_id == 'your-user-id':
             raise ValueError("HABITICA_USER_ID is not configured. Please set your Habitica User ID in the .env file.")
@@ -38,14 +38,13 @@ class HabiticaService:
         
         # Basic format validation
         if len(self.user_id) != 36 or self.user_id.count('-') != 4:
-            print(f"⚠️  Warning: User ID format looks unusual. Expected UUID format (36 chars with 4 dashes)")
-            print(f"   Current User ID: {self.user_id}")
+            logger.warning("User ID format looks unusual. Expected UUID format (36 chars with 4 dashes)")
+            logger.debug(f"Current User ID: {self.user_id}")
         
         if len(self.api_token) != 36 or self.api_token.count('-') != 4:
-            print(f"⚠️  Warning: API Token format looks unusual. Expected UUID format (36 chars with 4 dashes)")
-            print(f"   Current API Token: {self.api_token[:8]}...{self.api_token[-4:]}")
+            logger.warning("API Token format looks unusual. Expected UUID format (36 chars with 4 dashes)")
+            logger.debug(f"Current API Token: {self.api_token[:8]}...{self.api_token[-4:]}")
         
-        print(f"✅ Habitica API credentials validated successfully")
         logger.info("Habitica API credentials validated successfully")
     
     def get_credentials_info(self) -> Dict[str, str]:
@@ -71,11 +70,10 @@ class HabiticaService:
         }
         
         # Debug header info (without exposing full credentials)
-        print(f"\n🔑 API Headers Debug:")
-        print(f"   x-api-user: {self.user_id[:8]}...{self.user_id[-4:] if self.user_id else 'None'}")
-        print(f"   x-api-key: {self.api_token[:8]}...{self.api_token[-4:] if self.api_token else 'None'}")
-        print(f"   x-client: {x_client_value}")
-        print(f"   Content-Type: {headers['Content-Type']}")
+        logger.debug("API Headers configured")
+        logger.debug(f"x-api-user: {self.user_id[:8]}...{self.user_id[-4:] if self.user_id else 'None'}")
+        logger.debug(f"x-api-key: {self.api_token[:8]}...{self.api_token[-4:] if self.api_token else 'None'}")
+        logger.debug(f"x-client: {x_client_value}")
         
         return headers
     
@@ -86,14 +84,11 @@ class HabiticaService:
             headers = self._get_headers()
             
             # Log request details
-            print(f"\n🔄 Making Habitica API Request:")
-            print(f"   URL: {url}")
-            print(f"   Headers: {headers}")
-            print(f"   Method: {method}")
-            if data:
-                print(f"   Data: {data}")
-            
-            logger.info(f"Making {method} request to: {url}")
+            logger.info(f"Making {method} request to Habitica API: {endpoint}")
+            #logger.debug(f"Full URL: {url}")
+            #logger.debug(f"Request headers: {headers}")
+            #if data:
+            #    logger.debug(f"Request data: {data}")
             
             # Make the appropriate request
             if method.upper() == 'POST':
@@ -106,69 +101,66 @@ class HabiticaService:
                 response = requests.get(url, headers=headers, timeout=10)
             
             # Log response details
-            print(f"\n📥 Habitica API Response:")
-            print(f"   Status Code: {response.status_code}")
-            print(f"   Response Headers: {dict(response.headers)}")
-            
-            try:
-                response_json = response.json()
-                print(f"   Response Body: {response_json}")
-            except Exception as json_error:
-                print(f"   Response Text: {response.text}")
-                print(f"   JSON Parse Error: {json_error}")
+            logger.debug(f"Response status code: {response.status_code}")
+            #logger.debug(f"Response headers: {dict(response.headers)}")
+            #
+            #try:
+            #    response_json = response.json()
+            #    logger.debug(f"Response body: {response_json}")
+            #except Exception as json_error:
+            #    logger.debug(f"Response text: {response.text}")
+            #    logger.debug(f"JSON parse error: {json_error}")
             
             # Check for specific error codes
             if response.status_code == 401:
-                print(f"❌ Authentication Error: Invalid credentials")
                 raise HabiticaAPIError("Invalid Habitica API credentials. Please check your User ID and API Token.")
             
             if response.status_code == 400:
-                print(f"❌ Bad Request Error")
+                logger.error("Bad Request Error")
                 raise HabiticaAPIError(f"Bad request to Habitica API: {response.text}")
             
             if response.status_code == 404:
-                print(f"❌ Not Found Error")
+                logger.error("Not Found Error")
                 raise HabiticaAPIError(f"Habitica API endpoint not found: {endpoint}")
             
             if response.status_code == 429:
-                print(f"❌ Rate Limit Error")
+                logger.warning("Rate Limit Error")
                 raise HabiticaAPIError("Rate limit exceeded. Please wait before making more requests.")
             
             if response.status_code >= 500:
-                print(f"❌ Server Error")
+                logger.error(f"Server Error: {response.status_code}")
                 raise HabiticaAPIError(f"Habitica server error: {response.status_code}")
             
             response.raise_for_status()
             
             data = response.json()
             if not data.get('success', False):
-                print(f"❌ API Error: {data.get('message', 'Unknown error')}")
+                logger.error(f"API Error: {data.get('message', 'Unknown error')}")
                 raise HabiticaAPIError(f"API returned error: {data.get('message', 'Unknown error')}")
             
-            print(f"✅ Request successful, returning data")
+            logger.debug("Request successful, returning data")
             return data.get('data', {})
             
         except requests.exceptions.RequestException as e:
-            print(f"❌ Network Error: {e}")
-            logger.error(f"Error making request to Habitica API: {e}")
+            logger.error(f"Network Error: {e}")
             if "401" in str(e):
                 raise HabiticaAPIError("Invalid Habitica API credentials. Please check your User ID and API Token.")
             raise HabiticaAPIError(f"Failed to connect to Habitica API: {e}")
     
     def test_connection(self) -> Dict:
         """Test the connection to Habitica API with minimal data request"""
-        print(f"\n🧪 Testing Habitica API Connection...")
+        logger.info("Testing Habitica API Connection")
         try:
             # Make a simple request to test authentication
             result = self._make_request('user')
-            print(f"✅ Connection test successful!")
+            logger.info("Connection test successful!")
             return {
                 'success': True,
                 'message': 'Connection successful',
                 'user_data': result
             }
         except Exception as e:
-            print(f"❌ Connection test failed: {e}")
+            logger.error(f"Connection test failed: {e}")
             return {
                 'success': False,
                 'message': str(e),
@@ -179,25 +171,22 @@ class HabiticaService:
         """Get all tasks (todos, habits, dailies) from Habitica"""
         raw_tasks = self._make_request('tasks/user')
         
-        print(f"\n📊 Task Processing Debug:")
-        print(f"   Total tasks received: {len(raw_tasks)}")
+        logger.info(f"Task Processing: {len(raw_tasks)} total tasks received")
         
         # The API returns a flat list, so we need to separate by type
         todos = [task for task in raw_tasks if task.get('type') == 'todo']
         habits = [task for task in raw_tasks if task.get('type') == 'habit']
         dailies = [task for task in raw_tasks if task.get('type') == 'daily']
         
-        print(f"   Todos: {len(todos)}")
-        print(f"   Habits: {len(habits)}")
-        print(f"   Dailies: {len(dailies)}")
+        logger.info(f"Tasks separated - Todos: {len(todos)}, Habits: {len(habits)}, Dailies: {len(dailies)}")
         
         # Show a sample of each type for debugging
         if todos:
-            print(f"   Sample Todo: {todos[0].get('text', 'No text')}")
+            logger.debug(f"Sample Todo: {todos[0].get('text', 'No text')}")
         if habits:
-            print(f"   Sample Habit: {habits[0].get('text', 'No text')}")
+            logger.debug(f"Sample Habit: {habits[0].get('text', 'No text')}")
         if dailies:
-            print(f"   Sample Daily: {dailies[0].get('text', 'No text')}")
+            logger.debug(f"Sample Daily: {dailies[0].get('text', 'No text')}")
         
         return {
             'todos': todos,

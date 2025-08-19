@@ -2,8 +2,7 @@ from flask import Blueprint, jsonify, request, render_template
 import logging
 from .habitica_service import HabiticaService, HabiticaAPIError
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Get logger for this module
 logger = logging.getLogger(__name__)
 
 # Create blueprint
