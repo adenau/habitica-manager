@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitica Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Habitica Manager</h1>
+            <p class="subtitle">Manage your Habitica tasks, habits, and dailies</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2>Welcome to Habitica Manager</h2>
+                <p>This is your Habitica task management interface.</p>
+                
+                <div class="button-group">
+                    <button id="testConnectionBtn" class="btn btn-primary">Test Habitica Connection</button>
+                    <button id="loadDataBtn" class="btn btn-primary">Load Habitica Data</button>
+                    <button id="apiBtn" class="btn btn-secondary">Test API</button>
+                </div>
+
+                <div id="output" class="output-area">
+                    <p>Click "Load Habitica Data" to see your tasks, habits, and dailies!</p>
+                </div>
+            </div>
+
+            <!-- Task Sections Grid -->
+            <div class="task-sections-grid">
+                <!-- Tasks Section -->
+                <div id="tasksSection" class="card tasks-section" style="display: none;">
+                    <h3>📝 Todo Tasks</h3>
+                    <div id="todosList" class="tasks-list">
+                        <!-- Todos will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Habits Section -->
+                <div id="habitsSection" class="card habits-section" style="display: none;">
+                    <h3>🔄 Habits</h3>
+                    <div id="habitsList" class="tasks-list">
+                        <!-- Habits will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Dailies Section -->
+                <div id="dailiesSection" class="card dailies-section" style="display: none;">
+                    <h3>📅 Daily Tasks</h3>
+                    <div id="dailiesList" class="tasks-list">
+                        <!-- Dailies will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Habitica Manager. Ready for development!</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
