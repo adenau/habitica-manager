@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Habitica Manager - Scheduled{% endblock %}
+
+{% block page_title %}Scheduled Tasks{% endblock %}
+{% block page_subtitle %}View your scheduled and recurring tasks{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Today's Schedule</h2>
+    <p>Your scheduled tasks and upcoming deadlines.</p>
+    
+    <div class="scheduled-section">
+        <h3>Due Today</h3>
+        <p>Tasks that are due today will appear here.</p>
+        <!-- Today's tasks would go here -->
+    </div>
+    
+    <div class="scheduled-section">
+        <h3>Upcoming This Week</h3>
+        <p>Tasks scheduled for the upcoming week.</p>
+        <!-- Weekly tasks would go here -->
+    </div>
+    
+    <div class="scheduled-section">
+        <h3>Recurring Tasks</h3>
+        <p>Your habits and daily tasks with their schedules.</p>
+        <!-- Recurring tasks would go here -->
+    </div>
+</div>
+{% endblock %}

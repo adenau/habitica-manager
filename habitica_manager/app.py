@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 from dotenv import load_dotenv
+from .database import init_database, test_connection
 
 # Load environment variables
 load_dotenv()
@@ -75,6 +76,19 @@ def create_app(config_name=None):
     # Validate environment before creating app
     validate_environment()
     
+    # Initialize database
+    logger = logging.getLogger(__name__)
+    try:
+        init_database()
+        db_info = test_connection()
+        if db_info['success']:
+            logger.info(f"Database ready at {db_info['db_path']} with {db_info['table_count']} tables")
+        else:
+            logger.error(f"Database test failed: {db_info['error']}")
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        sys.exit(1)
+    
     app = Flask(__name__, 
                 template_folder='templates',
                 static_folder='static')
@@ -96,8 +110,6 @@ def create_app(config_name=None):
     from habitica_manager.routes import main_bp
     app.register_blueprint(main_bp)
     logger.info("Blueprints registered successfully")
-    
-    return app
     
     return app
 

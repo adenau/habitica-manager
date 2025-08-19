@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Habitica Manager - Settings{% endblock %}
+
+{% block page_title %}Settings{% endblock %}
+{% block page_subtitle %}Configure your Habitica Manager preferences{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Application Settings</h2>
+    <p>Here you can configure your Habitica Manager settings.</p>
+    
+    <div class="settings-section">
+        <h3>API Configuration</h3>
+        <p>Manage your Habitica API credentials and connection settings.</p>
+        <!-- Settings form would go here -->
+    </div>
+    
+    <div class="settings-section">
+        <h3>Display Preferences</h3>
+        <p>Customize how your tasks, habits, and dailies are displayed.</p>
+        <!-- Display settings would go here -->
+    </div>
+    
+    <div class="settings-section">
+        <h3>Notifications</h3>
+        <p>Configure notification preferences for task updates.</p>
+        <!-- Notification settings would go here -->
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template
 import logging
 from .habitica_service import HabiticaService, HabiticaAPIError
+from .database import test_connection
 
 # Get logger for this module
 logger = logging.getLogger(__name__)
@@ -16,16 +17,29 @@ def home():
     """Serve the main HTML page"""
     return render_template('index.html')
 
+@main_bp.route('/scheduled', methods=['GET'])
+def scheduled():
+    """Serve the scheduled tasks page"""
+    return render_template('scheduled.html')
+
+@main_bp.route('/settings', methods=['GET'])
+def settings():
+    """Serve the settings page"""
+    return render_template('settings.html')
+
 @main_bp.route('/api', methods=['GET'])
 def api_info():
     """API information endpoint"""
     try:
         creds_info = habitica_service.get_credentials_info()
+        db_info = test_connection()
+        
         return jsonify({
             'status': 'success',
             'message': 'Habitica Manager API is running',
             'version': '1.0.0',
-            'habitica_connection': creds_info
+            'habitica_connection': creds_info,
+            'database': db_info
         })
     except Exception as e:
         return jsonify({
@@ -73,6 +87,22 @@ def health_check():
         'status': 'healthy',
         'timestamp': request.headers.get('Date')
     })
+
+@main_bp.route('/api/database', methods=['GET'])
+def database_status():
+    """Get database status and information"""
+    try:
+        db_info = test_connection()
+        return jsonify({
+            'status': 'success',
+            'database': db_info
+        })
+    except Exception as e:
+        logger.error(f"Error checking database status: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': f'Database error: {str(e)}'
+        }), 500
 
 @main_bp.route('/api/tasks', methods=['GET'])
 def get_tasks():

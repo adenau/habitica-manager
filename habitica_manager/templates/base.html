@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Habitica Manager{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Left side navigation -->
+            <div class="nav-left">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/" class="nav-link">Scheduled</a>
+            </div>
+            
+            <!-- Right side navigation -->
+            <div class="nav-right">
+                <a href="/" class="nav-link">Settings</a>
+            </div>
+            
+            <!-- Mobile hamburger menu -->
+            <div class="nav-toggle" id="navToggle">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="nav-mobile-menu" id="navMobileMenu">
+            <a href="/" class="nav-mobile-link">Home</a>
+            <a href="/" class="nav-mobile-link">Scheduled</a>
+            <a href="/" class="nav-mobile-link">Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block page_header %}
+        <header>
+            <h1>{% block page_title %}Habitica Manager{% endblock %}</h1>
+            <p class="subtitle">{% block page_subtitle %}Manage your Habitica tasks, habits, and dailies{% endblock %}</p>
+        </header>
+        {% endblock %}
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Habitica Manager. Ready for development!</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

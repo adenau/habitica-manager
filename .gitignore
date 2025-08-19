@@ -144,6 +144,12 @@ README_old.md
 *.bak
 *.backup
 
+# Database files
+data/
+*.db
+*.sqlite
+*.sqlite3
+
 # Logs
 logs/
 *.log

@@ -4,6 +4,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Habitica Manager JavaScript loaded successfully!');
     
+    // Initialize navigation
+    initializeNavigation();
+    
     // Get DOM elements
     const testConnectionBtn = document.getElementById('testConnectionBtn');
     const loadDataBtn = document.getElementById('loadDataBtn');
@@ -63,6 +66,53 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 output.classList.remove('active');
             }, 5000);
+        });
+    }
+
+    // Initialize navigation functionality
+    function initializeNavigation() {
+        const navToggle = document.getElementById('navToggle');
+        const navMobileMenu = document.getElementById('navMobileMenu');
+        
+        // Set active link based on current page
+        setActiveNavLink();
+        
+        if (navToggle && navMobileMenu) {
+            navToggle.addEventListener('click', function() {
+                navToggle.classList.toggle('active');
+                navMobileMenu.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking on a link
+            const mobileLinks = document.querySelectorAll('.nav-mobile-link');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navToggle.classList.remove('active');
+                    navMobileMenu.classList.remove('active');
+                });
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navToggle.contains(event.target) || navMobileMenu.contains(event.target);
+                if (!isClickInsideNav) {
+                    navToggle.classList.remove('active');
+                    navMobileMenu.classList.remove('active');
+                }
+            });
+        }
+    }
+    
+    // Set active navigation link
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link, .nav-mobile-link');
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === currentPath || (currentPath === '/' && link.textContent.trim() === 'Home')) {
+                link.classList.add('active');
+            }
         });
     }
     
